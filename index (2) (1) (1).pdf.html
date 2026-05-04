@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EngePro — Mapeamento de Processos</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --azul:      #0E1F40;
+  --azul-m:    #162d5c;
+  --laranja:   #E8621A;
+  --grad:      linear-gradient(135deg, #E8401A 0%, #E8621A 50%, #c0398a 100%);
+  --cinza:     #F2F3F5;
+  --cinza-t:   #5A6272;
+  --borda:     #D8DCE6;
+  --branco:    #FFFFFF;
+  --preto:     #0A0E1A;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Barlow', sans-serif; background: var(--branco); color: var(--preto); line-height: 1.6; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--azul);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 66px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+/* SVG gear logo */
+.logo-wrap { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-svg { width: 38px; height: 38px; flex-shrink: 0; }
+.logo-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.45rem; letter-spacing: 0.02em;
+  color: var(--branco); line-height: 1;
+}
+.logo-name span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 0.65rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  display: block; margin-top: -2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  color: rgba(255,255,255,0.6);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em;
+  text-decoration: none; text-transform: uppercase; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--branco); }
+.nav-cta {
+  background: var(--grad) !important;
+  color: var(--branco) !important;
+  padding: 8px 20px; border-radius: 4px;
+}
+@media (max-width: 640px) { .nav-links { display: none; } }
+
+/* ── HERO ── */
+.hero {
+  background: var(--azul);
+  display: grid; grid-template-columns: 1.1fr 0.9fr;
+  min-height: 90vh; align-items: stretch;
+  position: relative; overflow: hidden;
+}
+@media (max-width: 768px) { .hero { grid-template-columns: 1fr; min-height: auto; } }
+
+/* big gear bg */
+.hero::before {
+  content: '';
+  position: absolute; right: -120px; top: 50%;
+  transform: translateY(-50%);
+  width: 600px; height: 600px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='rgba(255,255,255,0.025)' d='M43.3 0h13.4l2.3 8.6a35 35 0 0 1 8.5 3.5l7.9-3.7 9.5 9.5-3.7 7.9a35 35 0 0 1 3.5 8.5L93.4 36.7v13.4l-8.7 2.2a35 35 0 0 1-3.5 8.5l3.8 7.9-9.5 9.5-7.9-3.7a35 35 0 0 1-8.5 3.5L56.7 86H43.3l-2.2-8.7a35 35 0 0 1-8.5-3.5l-7.9 3.8-9.5-9.5 3.7-7.9a35 35 0 0 1-3.5-8.5L6.6 50V36.6l8.8-2.2a35 35 0 0 1 3.5-8.5l-3.8-7.9 9.5-9.5 7.9 3.7a35 35 0 0 1 8.5-3.5L43.3 0zM50 32a18 18 0 1 0 0 36 18 18 0 0 0 0-36z'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events: none; z-index: 0;
+}
+
+.hero-left {
+  padding: 80px 5% 80px 5%;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 1;
+}
+.hero-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.eyebrow-line {
+  width: 32px; height: 3px;
+  background: var(--grad);
+  display: inline-block; flex-shrink: 0;
+}
+.hero h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: clamp(3rem, 5.5vw, 5rem);
+  line-height: 0.95; color: var(--branco);
+  text-transform: uppercase; letter-spacing: -0.01em;
+  margin-bottom: 26px;
+}
+.hero h1 .grad-text {
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: block;
+}
+.hero-desc {
+  font-size: 1rem; color: rgba(255,255,255,0.6);
+  line-height: 1.8; max-width: 440px; margin-bottom: 40px;
+}
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-grad {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--grad); color: var(--branco);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 28px; border-radius: 4px; text-decoration: none;
+  box-shadow: 0 4px 24px rgba(232,98,26,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-grad:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(232,98,26,0.45); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: rgba(255,255,255,0.7);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.95rem; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 14px 24px; border-radius: 4px; text-decoration: none;
+  border: 2px solid rgba(255,255,255,0.18); transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--branco); }
+
+/* Hero right — process cards */
+.hero-right {
+  background: rgba(255,255,255,0.03);
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 60px 40px; position: relative; z-index: 1;
+}
+.flow-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.75rem; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  margin-bottom: 22px;
+}
+.flow-card {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 18px 20px; margin-bottom: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px; transition: all 0.25s;
+  cursor: default;
+}
+.flow-card:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(232,98,26,0.4);
+  transform: translateX(4px);
+}
+.flow-n {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.8rem; line-height: 1;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  flex-shrink: 0; width: 34px;
+}
+.flow-info strong {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--branco); margin-bottom: 3px;
+}
+.flow-info span { font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+
+/* ── STRIP ── */
+.strip {
+  background: var(--grad);
+  padding: 14px 5%;
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+}
+.strip p {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 1rem; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--branco);
+}
+.strip span { font-family: 'Barlow', sans-serif; font-weight: 400; text-transform: none; opacity: 0.8; }
+.strip-div { width: 1px; height: 20px; background: rgba(255,255,255,0.35); flex-shrink: 0; }
+
+/* ── SECTIONS ── */
+section { padding: 80px 5%; }
+.sec-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.75rem; letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.sec-label-line { width: 28px; height: 3px; background: var(--grad); display: block; flex-shrink: 0; }
+.sec-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: clamp(2rem, 3.8vw, 3rem);
+  text-transform: uppercase; line-height: 1.0;
+  color: var(--azul); margin-bottom: 14px; letter-spacing: -0.01em;
+}
+.sec-sub { font-size: 0.98rem; color: var(--cinza-t); max-width: 520px; line-height: 1.75; }
+
+/* ── DORES ── */
+.dores { background: var(--cinza); }
+.dores-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0; margin-top: 44px;
+  border: 2px solid var(--azul); border-radius: 8px; overflow: hidden;
+}
+.dor-card {
+  background: var(--branco); padding: 28px 24px;
+  border-right: 1px solid var(--borda);
+  position: relative; overflow: hidden; transition: all 0.25s;
+}
+.dor-card:last-child { border-right: none; }
+.dor-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 0; height: 3px; background: var(--grad);
+  transition: width 0.3s;
+}
+.dor-card:hover::after { width: 100%; }
+.dor-card:hover { background: var(--azul); }
+.dor-card:hover h3 { color: var(--branco); }
+.dor-card:hover p { color: rgba(255,255,255,0.55); }
+.dor-card:hover .dor-num { -webkit-text-fill-color: rgba(255,255,255,0.06); }
+.dor-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 4rem;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: rgba(14,31,64,0.07);
+  line-height: 1; margin-bottom: 8px; transition: all 0.25s;
+  display: block;
+}
+.dor-card h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1.08rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--azul); margin-bottom: 8px; transition: color 0.25s;
+}
+.dor-card p { font-size: 0.87rem; color: var(--cinza-t); line-height: 1.6; transition: color 0.25s; }
+
+/* ── COMO ── */
+.como { background: var(--branco); }
+.steps-box {
+  margin-top: 44px;
+  border: 2px solid var(--azul); border-radius: 8px; overflow: hidden;
+}
+.step-block {
+  display: grid; grid-template-columns: 72px 1fr;
+  border-bottom: 1px solid var(--borda); transition: background 0.2s;
+}
+.step-block:last-child { border-bottom: none; }
+.step-block:hover { background: var(--cinza); }
+.step-n {
+  background: var(--azul);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.8rem;
+  background-clip: padding-box;
+  background-color: var(--azul);
+  color: transparent;
+  background-image: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-color: var(--azul);
+  min-height: 88px; flex-shrink: 0;
+}
+.step-content { padding: 20px 26px; }
+.step-content h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1.1rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--azul); margin-bottom: 5px;
+}
+.step-content p { font-size: 0.88rem; color: var(--cinza-t); line-height: 1.65; }
+
+/* ── ENTREGA ── */
+.entrega { background: var(--azul); }
+.entrega .sec-title { color: var(--branco); }
+.entrega .sec-sub { color: rgba(255,255,255,0.5); }
+.entrega-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0; margin-top: 44px;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden;
+}
+.entrega-card {
+  padding: 28px 24px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03); transition: background 0.2s;
+  position: relative;
+}
+.entrega-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 3px; height: 0; background: var(--grad);
+  transition: height 0.3s;
+}
+.entrega-card:hover::before { height: 100%; }
+.entrega-card:last-child { border-right: none; }
+.entrega-card:hover { background: rgba(255,255,255,0.07); }
+.entrega-arrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 2.2rem;
+  background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1; margin-bottom: 12px; display: block;
+}
+.entrega-card h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--branco); margin-bottom: 8px;
+}
+.entrega-card p { font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+/* ── GRAD BAR ── */
+.grad-bar { height: 5px; background: var(--grad); }
+
+/* ── FORM ── */
+.form-section {
+  background: var(--cinza);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: start;
+}
+@media (max-width: 768px) { .form-section { grid-template-columns: 1fr; } }
+.form-copy .sec-title { color: var(--azul); }
+.form-copy p { font-size: 0.95rem; color: var(--cinza-t); line-height: 1.75; margin-bottom: 20px; }
+.whatsapp-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #25D366; color: #fff;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 1rem; letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 22px; border-radius: 4px; text-decoration: none;
+  box-shadow: 0 4px 16px rgba(37,211,102,0.3); transition: transform 0.2s;
+}
+.whatsapp-btn:hover { transform: translateY(-2px); }
+.form-box {
+  background: var(--branco);
+  border: 2px solid var(--azul); border-radius: 8px;
+  border-top: 5px solid transparent;
+  border-image: var(--grad) 1;
+  border-image-slice: 1;
+  padding: 36px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+.form-box h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.4rem; letter-spacing: 0.03em;
+  text-transform: uppercase; color: var(--azul); margin-bottom: 4px;
+}
+.form-box .form-sub { font-size: 0.82rem; color: var(--cinza-t); margin-bottom: 24px; }
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 0.82rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--azul); margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 11px 14px;
+  border: 2px solid var(--borda); border-radius: 4px;
+  font-size: 0.9rem; font-family: 'Barlow', sans-serif;
+  color: var(--preto); outline: none; transition: border-color 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(14,31,64,0.08);
+}
+.field textarea { resize: vertical; min-height: 90px; }
+.submit-btn {
+  width: 100%; padding: 15px; border: none; border-radius: 4px;
+  background: var(--grad); color: var(--branco);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.05rem; letter-spacing: 0.08em;
+  text-transform: uppercase; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(232,98,26,0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,98,26,0.4); }
+.form-note { font-size: 0.74rem; color: var(--cinza-t); text-align: center; margin-top: 12px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--preto);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; padding: 22px 5%;
+  border-top: 4px solid transparent;
+  border-image: var(--grad) 1; border-image-slice: 1;
+}
+.footer-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.footer-logo-svg { width: 30px; height: 30px; }
+.footer-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 1.1rem; color: var(--branco);
+}
+.footer-name span { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+footer p { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+.hero-left > * { animation: fadeUp 0.55s ease both; }
+.hero-left > *:nth-child(1) { animation-delay:0.05s; }
+.hero-left > *:nth-child(2) { animation-delay:0.15s; }
+.hero-left > *:nth-child(3) { animation-delay:0.25s; }
+.hero-left > *:nth-child(4) { animation-delay:0.35s; }
+.hero-right { animation: fadeUp 0.6s 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo-wrap">
+    <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#ffffff" d="M43.3 2h13.4l2.3 8.6a33 33 0 0 1 8.5 3.5l7.9-3.7 9.5 9.5-3.7 7.9a33 33 0 0 1 3.5 8.5L93.4 38.7v13.4l-8.7 2.2a33 33 0 0 1-3.5 8.5l3.8 7.9-9.5 9.5-7.9-3.7a33 33 0 0 1-8.5 3.5L56.7 88H43.3l-2.2-8.7a33 33 0 0 1-8.5-3.5l-7.9 3.8-9.5-9.5 3.7-7.9a33 33 0 0 1-3.5-8.5L6.6 51V37.6l8.8-2.2a33 33 0 0 1 3.5-8.5l-3.8-7.9 9.5-9.5 7.9 3.7a33 33 0 0 1 8.5-3.5L43.3 2zM50 33a17 17 0 1 0 0 34 17 17 0 0 0 0-34z"/>
+      <text x="50" y="57" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="900" font-size="18" fill="#0E1F40">Pro</text>
+    </svg>
+    <div>
+      <span class="logo-name">Enge<span>Pro</span></span>
+      <span class="logo-sub">Consultoria Jr.</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#dores">O Problema</a>
+    <a href="#como">Metodologia</a>
+    <a href="#entrega">Entregáveis</a>
+    <a href="#contato" class="nav-cta">Diagnóstico Gratuito</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow"><span class="eyebrow-line"></span>Empresa Júnior · UFPR · Desde 2010</div>
+    <h1>Sua empresa<br>cresceu.
+      <span class="grad-text">Os processos<br>acompanharam?</span>
+    </h1>
+    <p class="hero-desc">A EngePro mapeia como sua operação funciona de verdade — não como você acha que funciona. Identificamos gargalos, eliminamos retrabalho e entregamos um plano claro para você crescer sem aumentar o caos.</p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-grad">Diagnóstico Gratuito →</a>
+      <a href="#como" class="btn-ghost">Ver Metodologia</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <p class="flow-label">Nossa metodologia · 4 etapas</p>
+    <div class="flow-card">
+      <div class="flow-n">01</div>
+      <div class="flow-info"><strong>Diagnóstico</strong><span>Entendemos como sua operação funciona hoje</span></div>
+    </div>
+    <div class="flow-card">
+      <div class="flow-n">02</div>
+      <div class="flow-info"><strong>Mapeamento</strong><span>Documentamos cada etapa: quem faz, o quê e quando</span></div>
+    </div>
+    <div class="flow-card">
+      <div class="flow-n">03</div>
+      <div class="flow-info"><strong>Análise de Gargalos</strong><span>Achamos onde tempo e dinheiro estão sendo perdidos</span></div>
+    </div>
+    <div class="flow-card">
+      <div class="flow-n">04</div>
+      <div class="flow-info"><strong>Plano de Melhoria</strong><span>Recomendações práticas e implementáveis</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip">
+  <p>Empresa Júnior da UFPR <span>— Consultoria em Produção e Gestão</span></p>
+  <div class="strip-div"></div>
+  <p>Qualidade acadêmica <span>com custo acessível para PMEs de Curitiba e região</span></p>
+</div>
+
+<!-- DORES -->
+<section class="dores" id="dores">
+  <div class="sec-label"><span class="sec-label-line"></span>Você se identifica?</div>
+  <h2 class="sec-title">Sinais de que seus<br>processos precisam de atenção</h2>
+  <p class="sec-sub">Se algum desses cenários soa familiar, seu negócio pode estar perdendo dinheiro sem perceber.</p>
+  <div class="dores-grid">
+    <div class="dor-card">
+      <span class="dor-num">01</span>
+      <h3>Retrabalho Constante</h3>
+      <p>O mesmo erro acontece toda semana. Você corrige, mas o processo não muda — então o problema volta.</p>
+    </div>
+    <div class="dor-card">
+      <span class="dor-num">02</span>
+      <h3>Tudo Depende de Uma Pessoa</h3>
+      <p>Quando alguém falta, o processo trava. O conhecimento está na cabeça de quem nunca pode tirar férias.</p>
+    </div>
+    <div class="dor-card">
+      <span class="dor-num">03</span>
+      <h3>Gargalo Invisível</h3>
+      <p>Você sabe que algo não funciona, mas não sabe exatamente onde a operação perde tempo e dinheiro.</p>
+    </div>
+    <div class="dor-card">
+      <span class="dor-num">04</span>
+      <h3>Crescimento Vira Caos</h3>
+      <p>Contratar mais gente não resolve. O problema é o processo — escalar sem mapeá-lo só amplifica a bagunça.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMO -->
+<section class="como" id="como">
+  <div class="sec-label"><span class="sec-label-line"></span>Nossa Metodologia</div>
+  <h2 class="sec-title">Como trabalhamos<br>com você</h2>
+  <p class="sec-sub">Um processo estruturado, do primeiro contato até a entrega do plano de melhoria.</p>
+  <div class="steps-box">
+    <div class="step-block">
+      <div class="step-n">01</div>
+      <div class="step-content">
+        <h3>Diagnóstico Inicial</h3>
+        <p>Conversa com a liderança para entender o contexto e os principais processos. Sem formulários longos — uma reunião de 30 minutos já é suficiente.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-n">02</div>
+      <div class="step-content">
+        <h3>Imersão no Campo</h3>
+        <p>Observação e entrevistas com quem executa o trabalho no dia a dia. O processo real raramente é o que está descrito — e é o real que a gente mapeia.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-n">03</div>
+      <div class="step-content">
+        <h3>Mapeamento e Análise</h3>
+        <p>Construção dos fluxos do processo atual com identificação de gargalos e retrabalho. Usamos Fluxograma, BPMN e SIPOC conforme o contexto.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-n">04</div>
+      <div class="step-content">
+        <h3>Entrega do Plano</h3>
+        <p>Relatório com os processos documentados e recomendações práticas de melhoria — priorizadas por impacto. Você sabe exatamente por onde começar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENTREGA -->
+<section class="entrega" id="entrega">
+  <div class="sec-label"><span class="sec-label-line"></span>Entregáveis</div>
+  <h2 class="sec-title">O que você recebe<br>ao final</h2>
+  <p class="sec-sub">Não entregamos só um mapa — entregamos clareza para tomar decisões.</p>
+  <div class="entrega-grid">
+    <div class="entrega-card">
+      <span class="entrega-arrow">→</span>
+      <h3>Fluxograma do Processo Atual</h3>
+      <p>Representação visual de como sua operação funciona hoje — etapas, responsáveis e pontos de decisão.</p>
+    </div>
+    <div class="entrega-card">
+      <span class="entrega-arrow">→</span>
+      <h3>Relatório de Gargalos</h3>
+      <p>Principais problemas identificados com análise de causa raiz e impacto estimado em tempo e custo.</p>
+    </div>
+    <div class="entrega-card">
+      <span class="entrega-arrow">→</span>
+      <h3>Proposta de Processo Futuro</h3>
+      <p>Versão redesenhada do fluxo, eliminando etapas desnecessárias e redistribuindo responsabilidades.</p>
+    </div>
+    <div class="entrega-card">
+      <span class="entrega-arrow">→</span>
+      <h3>Plano de Ação Priorizado</h3>
+      <p>Recomendações por impacto e esforço — para você saber exatamente por onde começar a mudança.</p>
+    </div>
+  </div>
+</section>
+
+<div class="grad-bar"></div>
+
+<!-- FORM -->
+<section class="form-section" id="contato">
+  <div class="form-copy">
+    <div class="sec-label"><span class="sec-label-line"></span>Fale com a EngePro</div>
+    <h2 class="sec-title">Diagnóstico<br>gratuito.</h2>
+    <p>Preencha o formulário e um consultor da EngePro entra em contato em até 24 horas. Na primeira conversa já te damos uma visão inicial de onde estão os maiores problemas.</p>
+    <p>Ou fale direto com a gente:</p>
+    <a href="https://wa.me/5541987405502" target="_blank" class="whatsapp-btn">💬 Chamar no WhatsApp</a>
+  </div>
+  <div class="form-box">
+    <h3>Solicitar Diagnóstico</h3>
+    <p class="form-sub">Sem custo. Sem compromisso. Resposta em até 24h.</p>
+    <div class="field"><label>Seu nome *</label><input type="text" placeholder="Ex: João Silva"></div>
+    <div class="field"><label>Nome da empresa *</label><input type="text" placeholder="Ex: Metalúrgica Norte Ltda"></div>
+    <div class="field"><label>Segmento</label>
+      <select>
+        <option value="">Selecione...</option>
+        <option>Indústria / Manufatura</option>
+        <option>Comércio</option>
+        <option>Serviços</option>
+        <option>Logística</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="field"><label>WhatsApp ou e-mail *</label><input type="text" placeholder="(41) 9 9999-0000 ou email@empresa.com"></div>
+    <div class="field"><label>Qual é o principal problema que você enfrenta?</label>
+      <textarea placeholder="Ex: temos muito retrabalho no setor de montagem e não sabemos onde está o gargalo..."></textarea>
+    </div>
+    <button class="submit-btn" onclick="handleSubmit(this)">Solicitar Diagnóstico Gratuito →</button>
+    <p class="form-note">Seus dados não serão compartilhados. Somos uma EJ da UFPR — sem robôs, sem spam.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <svg class="footer-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#ffffff" opacity="0.7" d="M43.3 2h13.4l2.3 8.6a33 33 0 0 1 8.5 3.5l7.9-3.7 9.5 9.5-3.7 7.9a33 33 0 0 1 3.5 8.5L93.4 38.7v13.4l-8.7 2.2a33 33 0 0 1-3.5 8.5l3.8 7.9-9.5 9.5-7.9-3.7a33 33 0 0 1-8.5 3.5L56.7 88H43.3l-2.2-8.7a33 33 0 0 1-8.5-3.5l-7.9 3.8-9.5-9.5 3.7-7.9a33 33 0 0 1-3.5-8.5L6.6 51V37.6l8.8-2.2a33 33 0 0 1 3.5-8.5l-3.8-7.9 9.5-9.5 7.9 3.7a33 33 0 0 1 8.5-3.5L43.3 2zM50 33a17 17 0 1 0 0 34 17 17 0 0 0 0-34z"/>
+    </svg>
+    <span class="footer-name">Enge<span>Pro</span> Consultoria Jr.</span>
+  </div>
+  <p>Empresa Júnior da UFPR · Curitiba, PR · @engeproconsultoriajr</p>
+  <p>© 2026 EngePro. Todos os direitos reservados.</p>
+</footer>
+
+<script>
+function handleSubmit(btn) {
+  btn.textContent = '✓ Enviado! Entraremos em contato em breve.';
+  btn.style.background = '#1a5e1a';
+  btn.disabled = true;
+}
+</script>
+</body>
+</html>
